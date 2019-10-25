@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Linq;
 
 namespace TechJobsConsole
 {
@@ -13,7 +14,8 @@ namespace TechJobsConsole
         public static List<Dictionary<string, string>> FindAll()
         {
             LoadData();
-            return AllJobs;
+            List<Dictionary<string, string>> jobs = AllJobs.ToList();
+            return jobs;
         }
 
         /*
@@ -49,13 +51,13 @@ namespace TechJobsConsole
             {
                 string aValue = row[column];
 
-                if (aValue.Contains(value))
+                if (aValue.ToLower().Contains(value.ToLower()))
                 {
                     jobs.Add(row);
                 }
             }
 
-            return jobs;
+            return jobs.OrderBy(d => d["name"]).ToList();
         }
 
         /*
@@ -137,6 +139,34 @@ namespace TechJobsConsole
             valueBuilder.Clear();
 
             return rowValues.ToArray();
+        }
+
+        
+        public static List<Dictionary<string, string>> FindByValue(string value)
+        {
+
+            List<Dictionary<string, string>> jobs = new List<Dictionary<string, string>>();
+
+            LoadData();
+
+            foreach (Dictionary<string, string> row in AllJobs)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                foreach(string column in row.Values)
+                {
+                    sb.Append(column);
+                }
+
+                string aValue = sb.ToString().ToLower();
+
+                if (aValue.Contains(value.ToLower()))
+                { 
+                    jobs.Add(row);
+                }
+            }
+
+            return jobs.OrderBy(d => d["name"]).ToList();
         }
     }
 }
